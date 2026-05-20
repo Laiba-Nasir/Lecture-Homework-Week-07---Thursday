@@ -12,7 +12,7 @@ volatile int five_seconds = 0;  // flags
 
 void timer_init() {
   int i;
-  TIMER* tp;
+  TIMER* tp;timer_handler;
   printf("timer_init()\n");
   for (i = 0; i < 4; i++) {
     tp = &timer[i];
@@ -21,13 +21,13 @@ void timer_init() {
     if (i == 2) tp->base = (u32*)0x101E3000;
     if (i == 3) tp->base = (u32*)0x101E3020;
     *(tp->base + TLOAD) = 0x0;          // reset
-    *(tp->base + TVALUE) = 0xFFFFFFFF;  // read only; can be any value
+    *(tp->base + TVALUE) = 0xFFFFFFFF;  // read only; can be any valuetimetimer_handlerr_handler
     *(tp->base + TRIS) = 0x0;           // status
     *(tp->base + TMIS) = 0x0;           // status
     *(tp->base + TLOAD) = 0x100;
     // CntlReg=011-0110=|En|Pe|IntE|-|scal=01|32bit|0=wrap|=0x66
     *(tp->base + TCNTL) = 0x66;
-    *(tp->base + TBGLOAD) = 0x1C00;           // timer counter value
+    *(tp->base + TBGLOAD) = 0x15000;           // timer counter value
     tp->tick = tp->hh = tp->mm = tp->ss = 0;  // initialize wall clock
     strcpy((char*)tp->clock, "00:00:00");
   }
@@ -36,7 +36,7 @@ void timer_init() {
 void timer_handler(int n) {
   TIMER* t = &timer[n];
   t->tick++;
-  if (t->tick == 60) {
+  if (t->tick == 1) {
     t->tick = 0;
     t->ss++;
     if (t->ss == 60) {
